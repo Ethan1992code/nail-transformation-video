@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { put } from '@vercel/blob';
 import { createCreatomateRender, pollCreatomateRender, buildNailVideoPayload } from '../../../lib/creatomate';
 
 export const maxDuration = 120;
@@ -16,10 +17,17 @@ function validateFile(file: File): string | null {
   return null;
 }
 
-async function fileToBase64Url(file: File): Promise<string> {
+async function uploadToBlob(file: File, prefix: string): Promise<string> {
   const buffer = Buffer.from(await file.arrayBuffer());
-  const base64 = buffer.toString('base64');
-  return `data:${file.type};base64,${base64}`;
+  const extension = file.name.split('.').pop() || 'jpg';
+  const filename = `${prefix}-${Date.now()}.${extension}`;
+
+  const blob = await put(filename, buffer, {
+    access: 'public',
+    contentType: file.type,
+  });
+
+  return blob.url;
 }
 
 export async function POST(request: NextRequest) {
@@ -71,8 +79,8 @@ export async function POST(request: NextRequest) {
 
     if (renderMode === 'creatomate') {
       try {
-        const beforeImageUrl = await fileToBase64Url(beforeImage);
-        const afterImageUrl = await fileToBase64Url(afterImage);
+        const beforeImageUrl = await uploadToBlob(beforeImage, 'before');
+        const afterImageUrl = await uploadToBlob(afterImage, 'after');
         let logoUrl: string | undefined;
         if (logoImage) {
           const logoError = validateFile(logoImage);
@@ -82,7 +90,7 @@ export async function POST(request: NextRequest) {
               { status: 400 }
             );
           }
-          logoUrl = await fileToBase64Url(logoImage);
+          logoUrl = await uploadToBlob(logoImage, 'logo');
         }
 
         const payload = buildNailVideoPayload(
