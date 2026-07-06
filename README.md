@@ -1,36 +1,188 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Nail Transformation Video Generator
 
-## Getting Started
+A mobile-first web application for nail salons to create professional before/after transformation videos for social media platforms like Instagram Reels, TikTok, and Snapchat.
 
-First, run the development server:
+## Features
+
+- Upload or capture before and after photos
+- Customize shop name, Instagram handle, and logo
+- Preview video before generating
+- Generate high-quality 9:16 MP4 videos
+- Download and share videos
+
+## Tech Stack
+
+- Next.js 15 (App Router)
+- TypeScript
+- Tailwind CSS 4
+- HyperFrames (video rendering)
+- GSAP (animations)
+- Vercel Blob (storage)
+
+## Environment Requirements
+
+- Node.js >= 20.x
+- FFmpeg (for video rendering)
+- HyperFrames CLI (globally installed)
+
+## Installation
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# Install dependencies
+npm install
+
+# Install HyperFrames CLI globally (if not already installed)
+npm install -g @hyperframes/cli
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Local Development
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+# Start development server
+npm run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The application will be available at http://localhost:3000
 
-## Learn More
+## HyperFrames Commands
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+# Lint composition
+npx hyperframes lint
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# Preview composition
+npx hyperframes preview
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+# Render composition (with test variables)
+npx hyperframes render --variables-file test-variables.json
+```
 
-## Deploy on Vercel
+## Video Composition
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+The video template is located at:
+- `nail-transformation/index.html` - Main composition for HyperFrames rendering
+- `public/compositions/nail-transformation/index.html` - Preview composition for browser
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Video Specifications
+
+- Format: MP4
+- Aspect Ratio: 9:16
+- Resolution: 1080 × 1920
+- Frame Rate: 30 FPS
+- Duration: 8 seconds
+- Codec: H.264
+- Audio: AAC
+
+### Timeline
+
+| Time | Segment | Description |
+|------|---------|-------------|
+| 0-1s | Intro | "Nail Transformation" title animation |
+| 1-3s | Before | Before photo with label and slow zoom |
+| 3-4s | Transition | Flash white transition effect |
+| 4-7s | After | After photo with label, glow, and shimmer |
+| 7-8s | Outro | Shop logo, name, and Instagram handle |
+
+## API
+
+### POST /api/render
+
+Generate a video from uploaded images.
+
+**Request:**
+```multipart/form-data
+beforeImage: File (required)
+afterImage: File (required)
+logoImage: File (optional)
+shopName: String
+instagramHandle: String
+music: String
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "videoUrl": "/renders/xxx.mp4"
+}
+```
+
+## Environment Variables
+
+Copy `.env.example` to `.env.local` and configure:
+
+```env
+# Vercel Blob Storage (for production)
+BLOB_READ_WRITE_TOKEN=your_blob_token
+
+# Video Render Mode: 'local' or 'vercel'
+VIDEO_RENDER_MODE=local
+```
+
+## Vercel Deployment
+
+1. Push your code to GitHub/GitLab
+2. Connect your repo to Vercel
+3. Add environment variables in Vercel dashboard
+4. Deploy
+
+## Project Structure
+
+```
+app/
+  page.tsx              # Main page component
+  api/
+    render/
+      route.ts          # Video rendering API
+  globals.css           # Global styles
+
+components/
+  ImageUploader.tsx     # Image upload component
+  VideoPreview.tsx      # Video preview component
+
+types/
+  video.ts              # TypeScript types
+
+nail-transformation/    # HyperFrames composition
+  index.html            # Render composition
+  test-variables.json   # Test variables
+
+public/
+  compositions/
+    nail-transformation/
+      index.html        # Preview composition
+  renders/              # Generated videos
+
+.env.example           # Environment variables template
+```
+
+## Completed Features
+
+- ✅ Before/After photo upload with camera capture
+- ✅ Shop information input (name, Instagram, logo)
+- ✅ Video preview in browser
+- ✅ 8-second 9:16 video generation
+- ✅ Intro title animation
+- ✅ Before/After labels
+- ✅ Flash transition effect
+- ✅ After glow and shimmer effects
+- ✅ Brand outro with logo
+- ✅ Video download
+- ✅ Share functionality (Web Share API / copy link)
+- ✅ Error handling
+- ✅ TypeScript support
+
+## Not Implemented
+
+- ❌ User authentication
+- ❌ Database storage
+- ❌ Video history
+- ❌ Multiple templates
+- ❌ AI image processing
+- ❌ Background music
+- ❌ Direct social media publishing
+- ❌ Vercel Sandbox rendering (requires Docker)
+
+## License
+
+MIT

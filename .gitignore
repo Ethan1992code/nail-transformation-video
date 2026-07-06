@@ -32,10 +32,19 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
 
 # vercel
 .vercel
 
+# uploads and renders
+public/uploads/
+public/renders/
+nail-transformation/renders/
+nail-transformation/debug.log
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+.vercel

@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: #000;
+      }
+      body {
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      }
+      .clip {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+      }
+      .image-container {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        position: relative;
+      }
+      .image-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .label {
+        position: absolute;
+        top: 60px;
+        left: 50%;
+        transform: translateX(-50%);
+        padding: 16px 48px;
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 50px;
+        font-size: 48px;
+        font-weight: 700;
+        letter-spacing: 8px;
+        text-transform: uppercase;
+        color: #333;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+        z-index: 10;
+      }
+      .label-after {
+        background: linear-gradient(135deg, #ff6b9d, #c44569);
+        color: #fff;
+      }
+      .overlay-gradient {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), transparent 20%, transparent 80%, rgba(0, 0, 0, 0.4));
+        pointer-events: none;
+        z-index: 5;
+      }
+      .watermark {
+        position: absolute;
+        top: 30px;
+        right: 30px;
+        width: 80px;
+        height: 80px;
+        opacity: 0.6;
+        z-index: 15;
+      }
+      .watermark img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
+      .intro-content {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      }
+      .intro-title {
+        font-size: 80px;
+        font-weight: 800;
+        color: #fff;
+        text-transform: uppercase;
+        letter-spacing: 4px;
+        text-align: center;
+        line-height: 1.2;
+      }
+      .intro-subtitle {
+        font-size: 32px;
+        color: rgba(255, 255, 255, 0.7);
+        margin-top: 30px;
+        font-weight: 300;
+        letter-spacing: 2px;
+      }
+      .transition-flash {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: #fff;
+        opacity: 0;
+        z-index: 100;
+      }
+      .outro-content {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      }
+      .outro-logo {
+        width: 200px;
+        height: 200px;
+        margin-bottom: 40px;
+      }
+      .outro-logo img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
+      .outro-shop-name {
+        font-size: 64px;
+        font-weight: 700;
+        color: #fff;
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      .outro-instagram {
+        font-size: 36px;
+        color: rgba(255, 255, 255, 0.8);
+        text-align: center;
+        margin-bottom: 60px;
+        font-weight: 300;
+      }
+      .outro-hashtag {
+        font-size: 32px;
+        color: rgba(255, 255, 255, 0.6);
+        letter-spacing: 4px;
+        text-transform: uppercase;
+      }
+      .shimmer {
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 200%;
+        height: 100%;
+        background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.1), transparent);
+        transform: skewX(-20deg);
+        z-index: 8;
+      }
+      .glow-effect {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 80%;
+        height: 80%;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 70%);
+        pointer-events: none;
+        z-index: 6;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="8"
+      data-width="1080"
+      data-height="1920"
+    >
+      <div id="intro" class="clip" data-start="0" data-duration="1">
+        <div id="intro-inner" class="intro-content">
+          <div class="intro-title">Nail<br/>Transformation</div>
+          <div class="intro-subtitle">BEFORE & AFTER</div>
+        </div>
+      </div>
+
+      <div id="before" class="clip" data-start="1" data-duration="2">
+        <div class="image-container">
+          <img id="before-image" src="" alt="Before" />
+          <div class="overlay-gradient"></div>
+          <div class="label">BEFORE</div>
+          <div id="before-watermark" class="watermark" style="display: none;">
+            <img src="" alt="Logo" />
+          </div>
+        </div>
+      </div>
+
+      <div id="transition" class="clip" data-start="3" data-duration="1">
+        <div class="image-container">
+          <img id="transition-after-image" src="" alt="After" />
+          <div class="overlay-gradient"></div>
+        </div>
+        <div id="flash" class="transition-flash"></div>
+      </div>
+
+      <div id="after" class="clip" data-start="4" data-duration="3">
+        <div class="image-container">
+          <img id="after-image" src="" alt="After" />
+          <div class="overlay-gradient"></div>
+          <div class="label label-after">AFTER</div>
+          <div class="glow-effect"></div>
+          <div class="shimmer" id="shimmer"></div>
+          <div id="after-watermark" class="watermark" style="display: none;">
+            <img src="" alt="Logo" />
+          </div>
+        </div>
+      </div>
+
+      <div id="outro" class="clip" data-start="7" data-duration="1">
+        <div id="outro-inner" class="outro-content">
+          <div id="outro-logo" class="outro-logo" style="display: none;">
+            <img src="" alt="Logo" />
+          </div>
+          <div id="outro-shop-name" class="outro-shop-name"></div>
+          <div id="outro-instagram" class="outro-instagram"></div>
+          <div class="outro-hashtag">Share Your New Look</div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      let tl = gsap.timeline({ paused: true });
+
+      const updateComposition = (params) => {
+        if (params.beforeImageUrl) {
+          document.getElementById("before-image").src = params.beforeImageUrl;
+        }
+        if (params.afterImageUrl) {
+          document.getElementById("transition-after-image").src = params.afterImageUrl;
+          document.getElementById("after-image").src = params.afterImageUrl;
+        }
+        if (params.logoUrl) {
+          document.getElementById("before-watermark").style.display = "block";
+          document.getElementById("before-watermark").querySelector("img").src = params.logoUrl;
+          document.getElementById("after-watermark").style.display = "block";
+          document.getElementById("after-watermark").querySelector("img").src = params.logoUrl;
+          document.getElementById("outro-logo").style.display = "block";
+          document.getElementById("outro-logo").querySelector("img").src = params.logoUrl;
+        } else {
+          document.getElementById("before-watermark").style.display = "none";
+          document.getElementById("after-watermark").style.display = "none";
+          document.getElementById("outro-logo").style.display = "none";
+        }
+        document.getElementById("outro-shop-name").textContent = params.shopName || "Nail Studio";
+        if (params.instagramHandle) {
+          document.getElementById("outro-instagram").textContent = "@" + params.instagramHandle;
+          document.getElementById("outro-instagram").style.display = "block";
+        } else {
+          document.getElementById("outro-instagram").style.display = "none";
+        }
+
+        tl.kill();
+        tl = gsap.timeline({ paused: true });
+
+        tl.from("#intro-inner", { opacity: 0, duration: 0.5 }, 0);
+        tl.from(".intro-title", { opacity: 0, y: 100, duration: 0.8, ease: "power3.out" }, 0);
+        tl.from(".intro-subtitle", { opacity: 0, y: 50, duration: 0.6, ease: "power3.out" }, 0.3);
+        tl.to("#intro-inner", { opacity: 0, duration: 0.3 }, 0.7);
+        tl.set("#intro-inner", { opacity: 0 }, 1);
+
+        tl.from("#before", { opacity: 0, scale: 1.1, duration: 0.5 }, 1);
+        tl.to("#before-image", { scale: 1.05, duration: 1.8, ease: "none" }, 1);
+
+        tl.to("#flash", { opacity: 1, duration: 0.1 }, 3);
+        tl.to("#flash", { opacity: 0, duration: 0.2 }, 3.1);
+        tl.from("#after", { opacity: 0, duration: 0.3 }, 3.1);
+
+        tl.to("#after-image", { scale: 1.08, duration: 2.8, ease: "none" }, 4);
+        tl.from("#shimmer", { x: "-50%", duration: 2, ease: "none", repeat: 0 }, 4);
+
+        tl.from("#outro-inner", { opacity: 0, duration: 0.4 }, 7);
+        tl.from("#outro-shop-name", { opacity: 0, y: 50, duration: 0.5 }, 7);
+        tl.from("#outro-instagram", { opacity: 0, y: 30, duration: 0.5 }, 7.2);
+        tl.from(".outro-hashtag", { opacity: 0, duration: 0.4 }, 7.4);
+        tl.set("#outro-inner", { opacity: 0 }, 8);
+
+        window.__timelines["main"] = tl;
+      };
+
+      const getVar = (key, defaultValue) => {
+        if (window.__hyperframes && typeof window.__hyperframes.getVariables === 'function') {
+          const vars = window.__hyperframes.getVariables();
+          return vars[key] !== undefined ? vars[key] : defaultValue;
+        }
+        return defaultValue;
+      };
+
+      const initialParams = {
+        beforeImageUrl: getVar('beforeImageUrl', ''),
+        afterImageUrl: getVar('afterImageUrl', ''),
+        logoUrl: getVar('logoUrl', ''),
+        shopName: getVar('shopName', 'Nail Studio'),
+        instagramHandle: getVar('instagramHandle', '')
+      };
+
+      updateComposition(initialParams);
+
+      window.addEventListener('message', (event) => {
+        if (event.data && event.data.type) {
+          switch (event.data.type) {
+            case 'update-variables':
+              updateComposition(event.data.data);
+              break;
+            case 'play':
+              tl.play();
+              break;
+            case 'pause':
+              tl.pause();
+              break;
+            case 'reset':
+              tl.pause(0);
+              break;
+          }
+        }
+      });
+
+      if (window.parent) {
+        window.parent.postMessage('composition-ready', '*');
+      }
+    </script>
+  </body>
+</html>
