@@ -115,8 +115,11 @@ Copy `.env.example` to `.env.local` and configure:
 # Vercel Blob Storage (for production)
 BLOB_READ_WRITE_TOKEN=your_blob_token
 
-# Video Render Mode: 'local' or 'vercel'
-VIDEO_RENDER_MODE=local
+# Video Render Mode: 'local' or 'creatomate'
+VIDEO_RENDER_MODE=creatomate
+
+# Creatomate API Key (get from https://creatomate.com)
+CREATOMATE_API_KEY=your_creatomate_api_key
 ```
 
 ## Vercel Deployment
