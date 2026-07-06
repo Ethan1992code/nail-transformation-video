@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { put } from '@vercel/blob';
 import { createCreatomateRender, pollCreatomateRender, buildNailVideoPayload } from '../../../lib/creatomate';
 
 export const maxDuration = 120;
@@ -18,16 +17,22 @@ function validateFile(file: File): string | null {
 }
 
 async function uploadToBlob(file: File, prefix: string): Promise<string> {
-  const buffer = Buffer.from(await file.arrayBuffer());
-  const extension = file.name.split('.').pop() || 'jpg';
-  const filename = `${prefix}-${Date.now()}.${extension}`;
+  try {
+    const { put } = await import('@vercel/blob');
+    const buffer = Buffer.from(await file.arrayBuffer());
+    const extension = file.name.split('.').pop() || 'jpg';
+    const filename = `${prefix}-${Date.now()}.${extension}`;
 
-  const blob = await put(filename, buffer, {
-    access: 'public',
-    contentType: file.type,
-  });
+    const blob = await put(filename, buffer, {
+      access: 'public',
+      contentType: file.type,
+    });
 
-  return blob.url;
+    return blob.url;
+  } catch (error) {
+    console.error('Blob upload error:', error);
+    throw new Error('Failed to upload image. Please check Vercel Blob configuration.');
+  }
 }
 
 export async function POST(request: NextRequest) {
@@ -41,18 +46,6 @@ export async function POST(request: NextRequest) {
           success: false,
           error: 'Creatomate API key not configured. Set CREATOMATE_API_KEY environment variable.',
           code: 'missing_api_key',
-        },
-        { status: 500 }
-      );
-    }
-
-    const blobToken = process.env.BLOB_READ_WRITE_TOKEN;
-    if (renderMode === 'creatomate' && !blobToken) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'Vercel Blob not configured. Set BLOB_READ_WRITE_TOKEN environment variable.',
-          code: 'missing_blob_token',
         },
         { status: 500 }
       );
