@@ -16,23 +16,10 @@ function validateFile(file: File): string | null {
   return null;
 }
 
-async function uploadToBlob(file: File, prefix: string): Promise<string> {
-  try {
-    const { put } = await import('@vercel/blob');
-    const buffer = Buffer.from(await file.arrayBuffer());
-    const extension = file.name.split('.').pop() || 'jpg';
-    const filename = `${prefix}-${Date.now()}.${extension}`;
-
-    const blob = await put(filename, buffer, {
-      access: 'public',
-      contentType: file.type,
-    });
-
-    return blob.url;
-  } catch (error) {
-    console.error('Blob upload error:', error);
-    throw new Error('Failed to upload image. Please check Vercel Blob configuration.');
-  }
+async function fileToBase64Url(file: File): Promise<string> {
+  const buffer = Buffer.from(await file.arrayBuffer());
+  const base64 = buffer.toString('base64');
+  return `data:${file.type};base64,${base64}`;
 }
 
 export async function POST(request: NextRequest) {
@@ -84,8 +71,8 @@ export async function POST(request: NextRequest) {
 
     if (renderMode === 'creatomate') {
       try {
-        const beforeImageUrl = await uploadToBlob(beforeImage, 'before');
-        const afterImageUrl = await uploadToBlob(afterImage, 'after');
+        const beforeImageUrl = await fileToBase64Url(beforeImage);
+        const afterImageUrl = await fileToBase64Url(afterImage);
         let logoUrl: string | undefined;
         if (logoImage) {
           const logoError = validateFile(logoImage);
@@ -95,7 +82,7 @@ export async function POST(request: NextRequest) {
               { status: 400 }
             );
           }
-          logoUrl = await uploadToBlob(logoImage, 'logo');
+          logoUrl = await fileToBase64Url(logoImage);
         }
 
         const payload = buildNailVideoPayload(
